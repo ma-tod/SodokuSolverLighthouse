@@ -5,7 +5,7 @@ class InputValidator:
     @staticmethod
     def get_and_validate_user_input():
         user_input = input("Was soll benutzt werden?")
-        match user_input:
+        match user_input:  #user chooses board difficulty for preset boards
             case "Einfach": return BOARD_EASY
             case "Medium": return BOARD_MEDIUM
             case "Schwer": return BOARD_HARD
@@ -16,7 +16,7 @@ class InputValidator:
                 return InputValidator.get_and_validate_user_input()
 
     @staticmethod
-    def user_board_input():
+    def user_board_input():  #user creates custom board
         user_input = input("Welche Zelle willst du verändern (1 - 9)? Oder Drücke Enter um zu bestätigen")
         try:
             if user_input == "":
@@ -31,7 +31,7 @@ class InputValidator:
             return InputValidator.user_board_input()
 
     @staticmethod
-    def user_cell_input(cell: int):
+    def user_cell_input(cell: int):  #user creates custom board
         user_input = input("Welche Zahl soll geändert werden (1 - 9)? Oder Drücke Enter um zurück zu gehen")
         try:
             if user_input == "":
@@ -46,7 +46,7 @@ class InputValidator:
             return InputValidator.user_cell_input(cell)
 
     @staticmethod
-    def choose_number(allowed_numbers: dict, cell: int, current_number: int):
+    def choose_number(allowed_numbers: dict, cell: int, current_number: int):  #lets user choose possible number
         print("Welche Zahl soll da sein?")
         numbers = allowed_numbers[str(cell)]
         while True:

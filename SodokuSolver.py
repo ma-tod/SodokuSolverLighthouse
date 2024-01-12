@@ -18,7 +18,7 @@ class SodokuSolver:
         self.pyghthouse = Pyghthouse(username=self.username, token=self.apiToken)
 
     @classmethod
-    def define_board(cls):
+    def define_board(cls):  #implement possible numbers
         allowed_numbers = {"1": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "2": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "3": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -28,11 +28,11 @@ class SodokuSolver:
                            "7": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "8": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "9": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        board = EMPTY_BOARD
+        board = EMPTY_BOARD  #clean up board
         for i in board:
             print(i)
         edit = True
-        while edit:
+        while edit:  #implement users change to board
             cell, number = InputValidator.user_board_input()
             if cell == 0 and number == 0:
                 edit = False
@@ -50,7 +50,7 @@ class SodokuSolver:
         pass
 
 
-    def __get_empty_spot(self) -> tuple[int, int] | bool:
+    def __get_empty_spot(self) -> tuple[int, int] | bool:  #find blank spots in board
         row_count = 0
         for row in self.board:
             column_count = 0
@@ -61,7 +61,7 @@ class SodokuSolver:
                     return row_count - 1, column_count - 1
         return False
 
-    def __validate_number_for_slot(self, row: int, column: int, number: int) -> bool:
+    def __validate_number_for_slot(self, row: int, column: int, number: int) -> bool:  #check if number in slot adheres to sodoku rules
         for x in range(0, 9):
             if self.board[row][x] == number or self.board[x][column] == number:
                 return False
@@ -75,14 +75,14 @@ class SodokuSolver:
                         return False
         return True
 
-    def __setup_color_map(self):
+    def __setup_color_map(self):  #create sudoku outlines
         self.color_map = self.pyghthouse.empty_image()
         for x in range(0, 13, 4):
             for i in range(0, 13):
                 self.color_map[x][i] = Color.WHITE.value
                 self.color_map[i][x] = Color.WHITE.value
 
-    def solve_board(self):
+    def solve_board(self):  #solving board using algorithm
         empty_spot = self.__get_empty_spot()
         if not empty_spot:
             return True
@@ -118,7 +118,7 @@ class SodokuSolver:
 
 
     @classmethod
-    def board_from_preset(cls, arg=None):
+    def board_from_preset(cls, arg=None):  #selecting preset board
         if arg is not None:
             match arg:
                 case "Einfach": return cls(BOARD_EASY)
