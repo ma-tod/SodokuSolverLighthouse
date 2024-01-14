@@ -7,18 +7,22 @@ from boards import *
 from input_validator import InputValidator
 
 
-
-
 class SodokuSolver:
-    username = "Yuutyran"
-    apiToken = "API-TOK_Z0VS-r9pF-+OWL-4iJH-GOny"
 
-    def __init__(self, board: list[list]):
+    def __init__(self, board: list[list], username: str = "Yuutyran", api_token: str = ""):
+        self.pyghthouse: Pyghthouse = None
         self.board = board
-        self.pyghthouse = Pyghthouse(username=self.username, token=self.apiToken)
+        self.username = username
+        self.api_token = api_token
 
     @classmethod
-    def define_board(cls):  #implement possible numbers
+    def define_board(cls, api_token: str):
+        """
+        Defines a Sudoku board based on user input and returns it.
+
+        :param api_token: The API token to authenticate the request.
+        :return: An instance of the Sudoku class with the defined board.
+        """
         allowed_numbers = {"1": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "2": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "3": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -28,11 +32,11 @@ class SodokuSolver:
                            "7": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "8": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                            "9": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
-        board = EMPTY_BOARD  #clean up board
+        board = EMPTY_BOARD
         for i in board:
             print(i)
         edit = True
-        while edit:  #implement users change to board
+        while edit:
             cell, number = InputValidator.user_board_input()
             if cell == 0 and number == 0:
                 edit = False
@@ -44,13 +48,27 @@ class SodokuSolver:
                 board[row][column] = int(number)
                 for i in board:
                     print(i)
+        return cls(board, api_token=api_token)
 
 
-    def start_game(self):
-        pass
+    def __setup_pyghthouse(self) -> None:
+        """
+        creates a connection to pyghthouse
+        """
+        self.pyghthouse = Pyghthouse(username=self.username, token=self.api_token)
+        self.pyghthouse.start()
 
 
-    def __get_empty_spot(self) -> tuple[int, int] | bool:  #find blank spots in board
+    def start_game(self) -> None:
+        """solves board"""
+        self.solve_board()
+
+    def __get_empty_spot(self) -> tuple[int, int] | bool:
+        """
+        Tries to find an empty spot in Sudokuboard.
+
+        :return: Either tuple[int, int] (empty spot coordinates) or bool if no spot is found
+        """
         row_count = 0
         for row in self.board:
             column_count = 0
@@ -61,7 +79,15 @@ class SodokuSolver:
                     return row_count - 1, column_count - 1
         return False
 
-    def __validate_number_for_slot(self, row: int, column: int, number: int) -> bool:  #check if number in slot adheres to sodoku rules
+    def __validate_number_for_slot(self, row: int, column: int,
+                                   number: int) -> bool:
+        """
+        Checks if number is valid for the given row and column
+        :param row: int row number
+        :param column: int column number
+        :param number: int number to be validated
+        :return: bool True if number is valid, False otherwise
+        """
         for x in range(0, 9):
             if self.board[row][x] == number or self.board[x][column] == number:
                 return False
@@ -75,14 +101,22 @@ class SodokuSolver:
                         return False
         return True
 
-    def __setup_color_map(self):  #create sudoku outlines
+    def __setup_color_map(self) -> None:
+        """
+        Sets up white color outlines for board.
+        """
         self.color_map = self.pyghthouse.empty_image()
         for x in range(0, 13, 4):
             for i in range(0, 13):
                 self.color_map[x][i] = Color.WHITE.value
                 self.color_map[i][x] = Color.WHITE.value
 
-    def solve_board(self):  #solving board using algorithm
+    def solve_board(self) -> bool:
+        """
+        Recursively solves the board until all cells are valid if a cell isn't valid with all numbers tried
+        the number before gets changed
+        :return: True if the board was solved, False if there's no solution
+        """
         empty_spot = self.__get_empty_spot()
         if not empty_spot:
             return True
@@ -116,16 +150,26 @@ class SodokuSolver:
                 self.color_map[color_row][color_column] = Color.BLACK.value
         return False
 
-
     @classmethod
-    def board_from_preset(cls, arg=None):  #selecting preset board
+    def board_from_preset(cls, api_token: str, arg: str = None):
+        """
+        Lets user decide what board to use.
+        :param api_token: Api token for user authentification
+        :param arg: preset in ["Einfach", "Medium", "Schwer", "Experte", "Master"]
+        :return: an instance of the SudokuSolver class with preset board
+        """
         if arg is not None:
             match arg:
-                case "Einfach": return cls(BOARD_EASY)
-                case "Medium": return cls(BOARD_MEDIUM)
-                case "Schwer": return cls(BOARD_HARD)
-                case "Experte": return cls(BOARD_EXPERT)
-                case "Master": return cls(BOARD_MASTER)
+                case "Einfach":
+                    return cls(BOARD_EASY, api_token=api_token)
+                case "Medium":
+                    return cls(BOARD_MEDIUM, api_token=api_token)
+                case "Schwer":
+                    return cls(BOARD_HARD, api_token=api_token)
+                case "Experte":
+                    return cls(BOARD_EXPERT, api_token=api_token)
+                case "Master":
+                    return cls(BOARD_MASTER, api_token=api_token)
                 case _:
                     raise Exception
         else:
@@ -133,14 +177,30 @@ class SodokuSolver:
             for i in ["Einfach", "Medium", "Schwer", "Experte", "Master"]:
                 print(i)
             board = InputValidator.get_and_validate_user_input()
-            return cls(board)
+            return cls(board, api_token=api_token)
 
-    def test(self):
+    def setup(self) -> None:
+        """
+        Setup color maps and lighthouse connection
+        """
+        self.__setup_pyghthouse()
         self.__setup_color_map()
-        self.pyghthouse.start()
-        self.pyghthouse.set_image(self.color_map)
+        self.__setup_board_color_map()
 
-    def setup_board_color_map(self):
+    def tear_down(self) -> None:
+        """
+        Resets board colors and lighthouse connection
+        """
+        self.board = EMPTY_BOARD
+        self.__setup_color_map()
+        self.pyghthouse.close()
+        self.pyghthouse.stop()
+
+
+    def __setup_board_color_map(self):
+        """
+        Sets up color maps for existing board
+        """
         row_count = 0
         for row in self.board:
             row_count += 1
@@ -159,8 +219,3 @@ class SodokuSolver:
                     color_column += 1
                 self.color_map[color_row][color_column] = COLOR_TRANSLATOR[str(column)]
 
-
-solver = SodokuSolver.board_from_preset("Medium")
-solver.test()
-solver.setup_board_color_map()
-solver.solve_board()
