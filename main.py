@@ -1,8 +1,8 @@
-from SodokuSolver import SodokuSolver
+from SudokuSolver import SudokuSolver
 
 def main(api_token: str, method: int = 0) -> None:
-    solver = SodokuSolver.board_from_preset(api_token=api_token) if (
-            method == 0) else SodokuSolver.define_board(api_token=api_token)
+    solver = SudokuSolver.board_from_preset(api_token=api_token) if (
+            method == 0) else SudokuSolver.define_board(api_token=api_token)
     solver.setup()
     solver.start_game()
     solver.tear_down()

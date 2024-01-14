@@ -7,7 +7,7 @@ from boards import *
 from input_validator import InputValidator
 
 
-class SodokuSolver:
+class SudokuSolver:
 
     def __init__(self, board: list[list], username: str = "Yuutyran", api_token: str = ""):
         self.pyghthouse: Pyghthouse = None
