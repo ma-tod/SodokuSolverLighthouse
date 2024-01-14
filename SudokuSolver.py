@@ -108,8 +108,8 @@ class SudokuSolver:
         self.color_map = self.pyghthouse.empty_image()
         for x in range(0, 13, 4):
             for i in range(0, 13):
-                self.color_map[x][i] = Color.WHITE.value
-                self.color_map[i][x] = Color.WHITE.value
+                self.color_map[x][i + 8] = Color.WHITE.value
+                self.color_map[i][x + 8] = Color.WHITE.value
 
     def solve_board(self) -> bool:
         """
@@ -139,7 +139,7 @@ class SudokuSolver:
                 elif column > 2:
                     color_column += 1
 
-                self.color_map[color_row][color_column] = COLOR_TRANSLATOR[str(i)]
+                self.color_map[color_row][color_column + 8] = COLOR_TRANSLATOR[str(i)]
                 self.pyghthouse.set_image(self.color_map)
                 sleep(0.02)
 
@@ -147,7 +147,7 @@ class SudokuSolver:
                     return True
 
                 self.board[row][column] = 0
-                self.color_map[color_row][color_column] = Color.BLACK.value
+                self.color_map[color_row][color_column + 8] = Color.BLACK.value
         return False
 
     @classmethod
@@ -217,5 +217,5 @@ class SudokuSolver:
                     color_column += 2
                 elif column_count > 3:
                     color_column += 1
-                self.color_map[color_row][color_column] = COLOR_TRANSLATOR[str(column)]
+                self.color_map[color_row][color_column + 8] = COLOR_TRANSLATOR[str(column)]
 

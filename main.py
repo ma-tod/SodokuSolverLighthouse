@@ -16,6 +16,6 @@ if __name__ == '__main__':
     # selber eingetragenden Zahlen valide sind, der Algorithmus funktioniert für invalide Boards ggf. nicht.
     # für method bitte nur 0 oder 1 benutzen.
 
-    method = 1
+    method = 0
     token = "API-TOK_sYK0-fsXs-2zCA-9Uke-y1Rk"
     main(api_token=token, method=method)
